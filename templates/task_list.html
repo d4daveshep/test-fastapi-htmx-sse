@@ -1,0 +1,49 @@
+<div id="task-list">
+    {% if tasks %}
+        {% for task in tasks %}
+            <div class="task-item border-bottom p-3 {% if task.completed %}task-completed{% endif %}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center">
+                            {% if task.completed %}
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            {% else %}
+                                <i class="bi bi-circle me-2 text-muted"></i>
+                            {% endif %}
+                            <span class="{% if task.completed %}text-decoration-line-through text-muted{% endif %}">
+                                {{ task.title }}
+                            </span>
+                        </div>
+                        <small class="text-muted">
+                            Created: {{ task.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        </small>
+                    </div>
+                    <div class="btn-group">
+                        {% if not task.completed %}
+                            <button class="btn btn-sm btn-outline-success" 
+                                    hx-put="/tasks/{{ task.id }}/complete" 
+                                    hx-target="#task-list" 
+                                    hx-swap="outerHTML"
+                                    title="Mark as complete">
+                                <i class="bi bi-check"></i>
+                            </button>
+                        {% endif %}
+                        <button class="btn btn-sm btn-outline-danger" 
+                                hx-delete="/tasks/{{ task.id }}" 
+                                hx-target="#task-list" 
+                                hx-swap="outerHTML"
+                                hx-confirm="Are you sure you want to delete this task?"
+                                title="Delete task">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-clipboard-x display-1 mb-3"></i>
+            <p>No tasks yet. Add your first task above!</p>
+        </div>
+    {% endif %}
+</div>

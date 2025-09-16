@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <!-- Main Task Section -->
+    <div class="col-lg-8">
+        <!-- Add Task Form -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Add New Task</h5>
+            </div>
+            <div class="card-body">
+                <form hx-post="/tasks" hx-target="#task-list" hx-swap="outerHTML">
+                    <div class="input-group">
+                        <input type="text" name="title" class="form-control" placeholder="Enter task description..." required>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-plus"></i> Add Task
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Task List -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-list-check"></i> Tasks</h5>
+                <span class="badge bg-secondary" id="task-count">{{ tasks|length }} tasks</span>
+            </div>
+            <div class="card-body p-0">
+                {% include "task_list.html" %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- System Metrics -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-cpu"></i> System Metrics</h6>
+            </div>
+            <div class="card-body" id="system-metrics">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="metric">
+                            <div class="h4 text-primary mb-0" id="cpu-percent">--</div>
+                            <small class="text-muted">CPU %</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="metric">
+                            <div class="h4 text-success mb-0" id="memory-percent">--</div>
+                            <small class="text-muted">Memory %</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-activity"></i> Activity Feed</h6>
+            </div>
+            <div class="card-body p-0">
+                <div id="activity-feed" class="activity-feed">
+                    <div class="activity-item text-muted text-center py-3">
+                        <small>Waiting for activity...</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
