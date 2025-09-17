@@ -24,7 +24,9 @@
                                     hx-put="/tasks/{{ task.id }}/complete" 
                                     hx-target="#task-list" 
                                     hx-swap="outerHTML"
+                                    hx-indicator="#complete-spinner-{{ task.id }}"
                                     title="Mark as complete">
+                                <span id="complete-spinner-{{ task.id }}" class="spinner-border spinner-border-sm htmx-indicator me-1"></span>
                                 <i class="bi bi-check"></i>
                             </button>
                         {% endif %}
@@ -33,7 +35,9 @@
                                 hx-target="#task-list" 
                                 hx-swap="outerHTML"
                                 hx-confirm="Are you sure you want to delete this task?"
+                                hx-indicator="#delete-spinner-{{ task.id }}"
                                 title="Delete task">
+                            <span id="delete-spinner-{{ task.id }}" class="spinner-border spinner-border-sm htmx-indicator me-1"></span>
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
