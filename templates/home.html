@@ -1,7 +1,17 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx-ext-sse@2.2.2" crossorigin="anonymous"></script>   
+</head>
+<body>
+  <div>
+    <h1>Testing Async events with SSE </h1>
+  </div>
 
-{% block content %}
-<div>
-  <h1>Testing Async events with SSE </h1>
-</div>
-{% endblock %}
+  <div hx-ext="sse" sse-connect="/events/david" sse-swap="message">
+    No events yet
+  </div>
+</body>
+</html>

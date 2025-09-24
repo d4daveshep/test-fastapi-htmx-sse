@@ -31,7 +31,7 @@ event_generator: EventGenerator = EventGenerator()
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     # Start the event generator
-    # await event_generator.start(event_queue)
+    task: asyncio.Task = asyncio.create_task(event_generator.start(event_queue))
 
     return templates.TemplateResponse("home.html", {"request": request})
 
@@ -39,16 +39,12 @@ async def home(request: Request):
 @app.get("/events/{name}")
 async def async_events(request: Request, name: str) -> EventSourceResponse:
     async def event_publisher():
+        # FIXME: try better error handling when terminating the app from the command line
         try:
             while True:
-                try:
-                    event_data = await asyncio.wait_for(
-                        client_queue.get(), timeout=30.0
-                    )
-                    yield event_data
-                except asyncio.TimeoutError:
-                    # Send heartbeat to keep connection alive
-                    yield ": heartbeat\n\n"
+                event_data = await event_queue.get()
+                event_queue.task_done()
+                yield {"data": event_data}
         except asyncio.CancelledError as e:
             print(f"CancelledError: {str(e)}")
             raise
