@@ -6,11 +6,14 @@
     <script src="https://cdn.jsdelivr.net/npm/htmx-ext-sse@2.2.2" crossorigin="anonymous"></script>   
 </head>
 <body>
-  <div>
-    <h1>Testing Async events with SSE </h1>
-  </div>
+  <h1>Testing Async events with SSE </h1>
 
-  <div hx-ext="sse" sse-connect="/events/david" sse-swap="message">
+  <h3>Alice's events</h3>
+  <div hx-ext="sse" sse-connect="/events/alice" sse-swap="message">
+    No events yet
+  </div>
+  <h3>Bob's events</h3>
+  <div hx-ext="sse" sse-connect="/events/bob" sse-swap="message">
     No events yet
   </div>
 </body>

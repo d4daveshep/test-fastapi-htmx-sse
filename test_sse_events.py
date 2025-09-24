@@ -16,7 +16,11 @@ event_queue: asyncio.Queue[str] = asyncio.Queue()
 
 
 class EventGenerator:
+    def __init__(self) -> None:
+        self.started: bool = False
+
     async def start(self, queue: asyncio.Queue) -> None:
+        self.started = True
         while True:
             sleep_time: int = random.randint(5, 10)
             message: str = f"Event: sleeping for {sleep_time} secs"
@@ -31,7 +35,8 @@ event_generator: EventGenerator = EventGenerator()
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     # Start the event generator
-    task: asyncio.Task = asyncio.create_task(event_generator.start(event_queue))
+    if not event_generator.started:
+        task: asyncio.Task = asyncio.create_task(event_generator.start(event_queue))
 
     return templates.TemplateResponse("home.html", {"request": request})
 
