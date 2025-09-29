@@ -1,4 +1,5 @@
 import asyncio
+from collections import defaultdict
 import random
 
 from fastapi import FastAPI, Request
@@ -12,20 +13,21 @@ app = FastAPI(title="Test SSE Events")
 # Jinja2 templates
 templates = Jinja2Templates(directory="templates")
 
-event_queue: asyncio.Queue[str] = asyncio.Queue()
+event_queues: defaultdict[str, asyncio.Queue[str]] = defaultdict(asyncio.Queue)
 
 
 class EventGenerator:
     def __init__(self) -> None:
         self.started: bool = False
 
-    async def start(self, queue: asyncio.Queue) -> None:
+    async def start(self, queues: defaultdict[str, asyncio.Queue[str]]) -> None:
         self.started = True
         while True:
             sleep_time: int = random.randint(5, 10)
             message: str = f"Event: sleeping for {sleep_time} secs"
             print(message)
-            await queue.put(message)
+            for queue in queues.values():
+                await queue.put(message)
             await asyncio.sleep(float(sleep_time))
 
 
@@ -36,7 +38,7 @@ event_generator: EventGenerator = EventGenerator()
 async def home(request: Request):
     # Start the event generator
     if not event_generator.started:
-        task: asyncio.Task = asyncio.create_task(event_generator.start(event_queue))
+        task: asyncio.Task = asyncio.create_task(event_generator.start(event_queues))
 
     return templates.TemplateResponse("home.html", {"request": request})
 
@@ -47,6 +49,7 @@ async def async_events(request: Request, name: str) -> EventSourceResponse:
         # FIXME: try better error handling when terminating the app from the command line
         try:
             while True:
+                event_queue: asyncio.Queue[str] = event_queues[name]
                 event_data = await event_queue.get()
                 event_queue.task_done()
                 yield {"data": event_data}
